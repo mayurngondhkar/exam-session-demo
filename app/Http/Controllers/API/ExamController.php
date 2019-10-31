@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Exam;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class ExamController extends Controller
@@ -13,7 +15,20 @@ class ExamController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $exams = Exam::query()->select('id', 'code', 'name', 'start_time', 'end_time')->get();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something Went Wrong!'], 500);
+        }
+
+        foreach ($exams as $key => $value) {
+            $exams[$key]->links = [[
+                'ref' => 'exam',
+                'href' => "/api/v1/exams/$value->code",
+                'action' => 'GET'
+            ]];
+        }
+        return response()->json($exams, 200);
     }
 
     /**
