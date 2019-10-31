@@ -6,6 +6,7 @@ use App\Exam;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 
 class ExamController extends Controller
 {
@@ -33,24 +34,52 @@ class ExamController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return Response
+     * @throws ValidationException
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'code' => 'required|min:5|max:20',
+            'name' => 'required|min:5|max:50',
+            'start_time' => 'required|date_format:Y-m-d H:i:s',
+            'end_time' => 'required|date_format:Y-m-d H:i:s',
+        ]);
+
+        $exam = new Exam([
+            'code' => $request->input('code'),
+            'name' => $request->input('name'),
+            'start_time' => $request->input('start_time'),
+            'end_time' => $request->input('end_time'),
+        ]);
+
+        try {
+            $exam->save();
+        } catch (\Exception $e) {
+            // Log exception
+            return response()->json(['error' => 'Something Went Wrong!'], 500);
+        }
+
+        unset($exam['created_at']);
+        unset($exam['updated_at']);
+        $exam->msg = 'State created successfully';
+        $exam['links'] = [[
+            'ref' => 'exam',
+            'href' => "/api/v1/exams/$exam->id",
+            'action' => 'PUT'
+        ], [
+            'ref' => 'exam',
+            'href' => "/api/v1/exams/$exam->id",
+            'action' => 'DELETE'
+        ], [
+            'rel' => 'exams',
+            'href' => '/api/v1/exams',
+            'action' => 'GET'
+        ]];
+        return response()->json($exam, 200);
     }
 
     /**
