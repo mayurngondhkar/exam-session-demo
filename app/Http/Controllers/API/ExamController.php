@@ -123,6 +123,27 @@ class ExamController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $exam = Exam::find($id);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something Went Wrong!'], 500);
+        }
+
+        if (!$exam) {
+            return response()->json(['error' => 'Resource not found'], 404);
+        }
+
+        try {
+            $exam->delete();
+        } catch (\Exception $e) {
+            // Log exception
+            return response()->json(['error' => 'Something Went Wrong!'], 500);
+        }
+
+        $examInfo = new \stdClass();
+        $examInfo->links = ['rel' => 'exams', 'href' => '/api/v1/exams', 'action' => 'GET'];
+        $examInfo->msg = 'Exam deleted successfully';
+
+        return response()->json($examInfo, 200);
     }
 }
