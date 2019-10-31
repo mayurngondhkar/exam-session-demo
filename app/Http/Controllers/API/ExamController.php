@@ -136,6 +136,13 @@ class ExamController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'code' => 'required|unique:exams|min:5|max:20',
+            'name' => 'required|min:5|max:50',
+            'start_time' => 'required|date_format:Y-m-d H:i:s',
+            'end_time' => 'required|date_format:Y-m-d H:i:s',
+        ]);
+
         try {
             $exam = Exam::find($id);
         } catch (\Exception $e) {
