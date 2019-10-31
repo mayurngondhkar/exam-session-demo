@@ -95,13 +95,58 @@ class ExamController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param Request $request
+     * @param int $id
      * @return Response
+     * @throws ValidationException
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $exam = Exam::find($id);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something Went Wrong!'], 500);
+        }
+
+        if(!$exam) {
+            return response()->json(['error' => 'Resource not found'], 404);
+        }
+
+        $this->validate($request, [
+            'name' => 'required|min:5|max:50',
+        ]);
+
+        $exam->code = $request->input('code');
+        $exam->name = $request->input('name');
+        $exam->start_time = $request->input('start_time');
+        $exam->end_time = $request->input('end_time');
+
+        try {
+            $exam->save();
+        } catch (\Exception $e) {
+            // Log exception
+            return response()->json(['error' => 'Something Went Wrong!'], 500);
+        }
+
+        unset($exam['created_at']);
+        unset($exam['updated_at']);
+        unset($exam['deleted_at']);
+
+        $exam->msg = 'State Updated';
+        $exam['links'] = [[
+            'ref' => 'exam',
+            'href' => "/api/v1/exams/$id",
+            'action' => 'PUT'
+        ], [
+            'ref' => 'exam',
+            'href' => "/api/v1/exams/$id",
+            'action' => 'DELETE'
+        ], [
+            'rel' => 'exams',
+            'href' => '/api/v1/exams',
+            'action' => 'GET'
+        ]];
+        return response()->json($exam, 200);
     }
 
     /**
