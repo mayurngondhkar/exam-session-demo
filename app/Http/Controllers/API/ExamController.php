@@ -58,9 +58,37 @@ class ExamController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($examCode)
     {
-        //
+        try {
+            $exam = Exam::query()
+                ->select('id', 'code', 'name', 'start_time', 'end_time')
+                ->where('code', '=', $examCode)
+                ->first();
+        } catch (\Exception $e) {
+            // Log this
+            return response()->json(['error' => 'Something Went Wrong!'], 500);
+        }
+
+        if(!$exam) {
+            return response()->json(['error' => 'Resource not found'], 404);
+        }
+
+        $exam['links'] = [[
+            'ref' => 'exam',
+            'href' => "/api/v1/exams/$examCode",
+            'action' => 'PUT'
+        ], [
+            'ref' => 'exam',
+            'href' => "/api/v1/exams/$examCode",
+            'action' => 'DELETE'
+        ], [
+            'rel' => 'exams',
+            'href' => '/api/v1/exams',
+            'action' => 'GET'
+        ]];
+
+        return response()->json($exam, 200);
     }
 
     /**
