@@ -54,6 +54,10 @@ class ExamController extends Controller
             'end_time' => 'required|date_format:Y-m-d H:i:s',
         ]);
 
+        if (date_parse($request->start_time) > date_parse($request->end_time)) {
+            return response()->json(['start_time' => ['The start_time is greater than end_time']], 422);
+        }
+
         $exam = new Exam([
             'code' => $request->input('code'),
             'name' => $request->input('name'),
