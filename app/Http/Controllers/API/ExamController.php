@@ -13,12 +13,17 @@ class ExamController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $exams = Exam::query()->select('id', 'code', 'name', 'start_time', 'end_time')->get();
+            $exams = Exam::query()
+                ->select('id', 'code', 'name', 'start_time', 'end_time')
+                ->where('code', 'LIKE', "%{$request->code}%")
+                ->where('name', 'LIKE', "%{$request->name}%")
+                ->get();
         } catch (\Exception $e) {
             return response()->json(['error' => 'Something Went Wrong!'], 500);
         }
