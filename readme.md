@@ -1,21 +1,98 @@
-# Lumen PHP Framework
+# Laravel Lumen Exam Session Demo
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/lumen-framework/v/unstable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+## Exam Session REST API application
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+* This system provides API's to Get, Create, Update and Delete Exams
+* Attributes for Exam Session model
+    * Code (unique): Exam code
+    * Name: Name of the exam
+    * Start Time
+    * End Time
 
-## Official Documentation
+* Exam Session may have one or more Exams
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
+## Developer Information
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+### API's
+API | HTTP | Auth | API Link | Query String |
+|---|---|---|---|---|
+| Exam | GET | `NONE` | 'api/v1/exams' | 'YES' |
+| Exam | GET | `NONE` | 'api/v1/exams/{examId}' | 'NO' |
+| Exam | POST | `NONE` | 'api/v1/exams' | 'NO' |
+| Exam | PUT | `NONE` | 'api/v1/exams/{examId}' | 'NO' |
+| Exam | DELETE | `NONE` | 'api/v1/exams/{examId}' | 'NO' |
 
-## License
+### Environment
 
-The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+> Laravel Lumen Version 6.2.0
+>
+>***
+> PHP Version 7.3.5
+>
+>***
+### Installation
+* Run `$ composer install`
+### Environment File Setup
+* MySql Database used
+
+* A Laravel Lumen Generator added
+    * Look at https://github.com/flipboxstudio/lumen-generator
+    * Following Artisan commands are made available
+
+          ----------------------------------------------------
+          key:generate      Set the application key
+
+          make:command      Create a new Artisan command
+          make:controller   Create a new controller class
+          make:event        Create a new event class
+          make:job          Create a new job class
+          make:listener     Create a new event listener class
+          make:mail         Create a new email class
+          make:middleware   Create a new middleware class
+          make:migration    Create a new migration file
+          make:model        Create a new Eloquent model class
+          make:policy       Create a new policy class
+          make:provider     Create a new service provider class
+          make:seeder       Create a new seeder class
+          make:test         Create a new test class
+* Run `php artisan migrate --seed` to migrate and seed
+
+### Useage
+* Look at the API's index for information on CRUD operations.
+* Look at the controllers for validation using Lumen validator for Create and Update operations.
+---
+      'code' => 'required|unique:exams|min:5|max:20',
+      'name' => 'required|min:5|max:50',
+      'start_time' => 'required|date_format:Y-m-d H:i:s',
+      'end_time' => 'required|date_format:Y-m-d H:i:s',
+---
+* HATEOAS implemented
+    * Look at `"links"` field in the response
+    * Example `/api/v1/exams/1` response
+    ---
+        {
+            "id": 1,
+            "code": "5R8R1j2g",
+            "name": "NB1XwbUCSE",
+            "start_time": "2019-11-23 09:00:00",
+            "end_time": "2019-11-23 12:00:00",
+            "links": [
+                {
+                    "ref": "exam",
+                    "href": "/api/v1/exams/1",
+                    "action": "PUT"
+                },
+                {
+                    "ref": "exam",
+                    "href": "/api/v1/exams/1",
+                    "action": "DELETE"
+                },
+                {
+                    "rel": "exams",
+                    "href": "/api/v1/exams",
+                    "action": "GET"
+                }
+            ]
+        }
+    ---
