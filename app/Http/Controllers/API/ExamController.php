@@ -56,6 +56,8 @@ class ExamController extends Controller
 
         if (date_parse($request->start_time) > date_parse($request->end_time)) {
             return response()->json(['start_time' => ['The start_time is greater than end_time']], 422);
+        } elseif (date_parse($request->start_time) === date_parse($request->end_time)) {
+            return response()->json(['start_time' => ['The start_time cannot be equal to end_time']], 422);
         }
 
         $exam = new Exam([
