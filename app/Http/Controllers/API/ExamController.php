@@ -56,15 +56,15 @@ class ExamController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param $examCode
+     * @param $examId
      * @return Response
      */
-    public function show($examCode)
+    public function show($examId)
     {
         try {
             $exam = Exam::query()
                 ->select('id', 'code', 'name', 'start_time', 'end_time')
-                ->where('code', '=', $examCode)
+                ->where('id', '=', $examId)
                 ->first();
         } catch (\Exception $e) {
             // Log this
@@ -77,11 +77,11 @@ class ExamController extends Controller
 
         $exam['links'] = [[
             'ref' => 'exam',
-            'href' => "/api/v1/exams/$examCode",
+            'href' => "/api/v1/exams/$examId",
             'action' => 'PUT'
         ], [
             'ref' => 'exam',
-            'href' => "/api/v1/exams/$examCode",
+            'href' => "/api/v1/exams/$examId",
             'action' => 'DELETE'
         ], [
             'rel' => 'exams',

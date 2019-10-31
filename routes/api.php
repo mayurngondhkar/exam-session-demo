@@ -13,8 +13,8 @@
 
 $router->group(['prefix' => 'api/v1/exams'], function () use ($router) {
     $router->get('',  ['uses' => 'API\ExamController@index']);
-    $router->get('{examCode}',  ['uses' => 'API\ExamController@show']);
+    $router->get('{examId}',  ['uses' => 'API\ExamController@show']);
     $router->post('',  ['uses' => 'API\ExamController@store']);
-    $router->put('{examCode}',  ['uses' => 'API\ExamController@update']);
-    $router->delete('{examCode}',  ['uses' => 'API\ExamController@destroy']);
+    $router->put('{examId}',  ['uses' => 'API\ExamController@update']);
+    $router->delete('{examId}',  ['uses' => 'API\ExamController@destroy']);
 });
